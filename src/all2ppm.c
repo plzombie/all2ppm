@@ -28,7 +28,44 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "../include/ppm_save.h"
 
+#include <stdlib.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "third_party/stb_image.h"
+
 int wmain(int argc, wchar_t **argv)
 {
+	FILE *f_in = 0, *f_out = 0;
+	int sizex, sizey, channels;
+	unsigned char *buffer = 0;
+
+	if(argc < 3) {
+		wprintf(L"\tall2ppm input.* output.ppm\n\n");
+		return 0;
+	}
+
+	f_in = _wfopen(argv[1], L"rb");
+	f_out = _wfopen(argv[2], L"wb");
+	if(!f_in || !f_out) {
+		wprintf(L"Can't open files\n");
+		goto EXIT;
+	}
+
+	buffer = stbi_load_from_file(f_in, &sizex, &sizey, &channels, 0);
+	if(!buffer) {
+		wprintf(L"Can't open file\n");
+		goto EXIT;
+	}
+
+	if(!ppmSave(sizex, sizey, channels, buffer, f_out)) {
+		wprintf(L"Can't save file\n");
+		goto EXIT;
+	}
+
+EXIT:
+	if(f_in) fclose(f_in);
+	if(f_out) fclose(f_out);
+	if(buffer) free(buffer);
+
         return 0;
 }

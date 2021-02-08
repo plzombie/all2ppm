@@ -85,13 +85,15 @@ bool pbmSave(unsigned int sizex, unsigned int sizey, unsigned char *buf, FILE *f
 			*(p++) = b;
 			b = 0;
 		}
-		b |= 1<<j;
+		if(buf[i] < 128)
+			b |= 1<<(7-j);
 	}
 	if(j == 8) *p = b;
 
 	fprintf(f, "P4\n%u %u\n", sizex, sizey);
+	fwrite(filebuf, filesize, 1, f);
 
 	free(filebuf);
 
- 	return false;
+ 	return true;
 }
