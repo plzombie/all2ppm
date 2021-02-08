@@ -29,6 +29,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "../include/ppm_save.h"
 
 #include <stdlib.h>
+#include <wchar.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "third_party/stb_image.h"
