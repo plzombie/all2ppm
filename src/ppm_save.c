@@ -28,19 +28,70 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "../include/ppm_save.h"
 
+#include <stdint.h>
+#include <stdlib.h>
+
 bool ppmSave(unsigned int sizex, unsigned int sizey, unsigned int channels, unsigned char *buf, FILE *f)
 {
+	size_t i, j, jmax, line_size;
+	unsigned char *p;
+
 	if(channels != 1 && channels != 3) return false;
 	if(sizex == 0 || sizey == 0) return false;
 	if(!buf || !f) return false;
 
-	return false;
+	fprintf(f, (channels == 1)?"P5\n%u %u\n255\n":"P6\n%u %u\n255\n", sizex, sizey);
+
+	if((SIZE_MAX / channels) >= sizex) {
+		jmax = 1;
+		line_size = (size_t)sizex * (size_t)channels;
+	} else {
+		jmax = channels;
+		line_size = sizex;
+	}
+	p = buf;
+
+	for(i = 0; i < sizey; i++)
+		for(j = 0; j < jmax; j++) {
+			fwrite(p, line_size, 1, f);
+			p += line_size;
+		}
+
+	return true;
 }
 
 bool pbmSave(unsigned int sizex, unsigned int sizey, unsigned char *buf, FILE *f)
 {
+	unsigned char *filebuf, *p, b;
+	size_t filesize, i, j;
+
 	if(sizex == 0 || sizey == 0) return false;
 	if(!buf || !f) return false;
+	if((SIZE_MAX / sizey) <= sizex) return false;
 
-	return false;
+	filesize = (size_t)sizex*(size_t)sizey/8;
+	if(((size_t)sizex*(size_t)sizey)%8 > 0)
+		filesize++;
+
+	filebuf = malloc(filesize);
+	if(!filebuf) return false;
+
+	j = 0;
+	b = 0;
+	p = filebuf;
+	for(i = 0; i < (size_t)sizex*(size_t)sizey; i++, j++) {
+		if(j == 8) {
+			j = 0;
+			*(p++) = b;
+			b = 0;
+		}
+		b |= 1<<j;
+	}
+	if(j == 8) *p = b;
+
+	fprintf(f, "P4\n%u %u\n", sizex, sizey);
+
+	free(filebuf);
+
+ 	return false;
 }
