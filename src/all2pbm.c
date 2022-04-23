@@ -40,7 +40,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef A2P_USE_WCHAR
 int wmain(int argc, wchar_t** argv)
 #else
-int wmain(int argc, char** argv)
+int main(int argc, char** argv)
 #endif
 {
  	FILE *f_in = 0, *f_out = 0;
