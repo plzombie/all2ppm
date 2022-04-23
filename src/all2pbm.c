@@ -33,7 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define STB_IMAGE_IMPLEMENTATION
 #include "third_party/stb_image.h"
 
-int wmain(int argc, wchar_t **argv)
+#if defined(_WIN32)
+#define A2P_USE_WCHAR
+#endif
+
+#ifdef A2P_USE_WCHAR
+int wmain(int argc, wchar_t** argv)
+#else
+int wmain(int argc, char** argv)
+#endif
 {
  	FILE *f_in = 0, *f_out = 0;
 	int sizex, sizey, channels;
@@ -44,8 +52,13 @@ int wmain(int argc, wchar_t **argv)
 		return 0;
 	}
 
+#ifdef A2P_USE_WCHAR
 	f_in = _wfopen(argv[1], L"rb");
 	f_out = _wfopen(argv[2], L"wb");
+#else
+	f_in = fopen(argv[1], "rb");
+	f_out = fopen(argv[2], "wb");
+#endif
 	if(!f_in || !f_out) {
 		wprintf(L"Can't open files\n");
 		goto EXIT;
