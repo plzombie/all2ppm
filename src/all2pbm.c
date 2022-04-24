@@ -49,7 +49,7 @@ int main(int argc, char** argv)
 	unsigned char *buffer = 0;
 
 	if(argc < 3) {
-		wprintf(L"\tall2ppm input.* output.ppm\n\n");
+		wprintf(L"\tall2pbm input.* output.pbm\n\n");
 		return 0;
 	}
 
