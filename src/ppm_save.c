@@ -1,7 +1,7 @@
 /*
 BSD 2-Clause License
 
-Copyright (c) 2021, Mikhail Morozov
+Copyright (c) 2021-2023, Mikhail Morozov
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,17 +31,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdint.h>
 #include <stdlib.h>
 
-bool ppmSave(unsigned int sizex, unsigned int sizey, unsigned int channels, unsigned char *buf, FILE *f)
+static void DumpBuffer(unsigned int sizex, unsigned int sizey, unsigned int channels, unsigned char *buf, FILE *f)
 {
 	size_t i, j, jmax, line_size;
 	unsigned char *p;
-
-	if(channels != 1 && channels != 3) return false;
-	if(sizex == 0 || sizey == 0) return false;
-	if(!buf || !f) return false;
-
-	fprintf(f, (channels == 1)?"P5\n%u %u\n255\n":"P6\n%u %u\n255\n", sizex, sizey);
-
+	
 	if((SIZE_MAX / channels) >= sizex) {
 		jmax = 1;
 		line_size = (size_t)sizex * (size_t)channels;
@@ -56,6 +50,39 @@ bool ppmSave(unsigned int sizex, unsigned int sizey, unsigned int channels, unsi
 			fwrite(p, line_size, 1, f);
 			p += line_size;
 		}
+}
+
+bool ppmSave(unsigned int sizex, unsigned int sizey, unsigned int channels, unsigned char *buf, FILE *f)
+{
+	if(channels != 1 && channels != 3) return false;
+	if(sizex == 0 || sizey == 0) return false;
+	if(!buf || !f) return false;
+
+	fprintf(f, (channels == 1)?"P5\n%u %u\n255\n":"P6\n%u %u\n255\n", sizex, sizey);
+
+	DumpBuffer(sizex, sizey, channels, buf, f);
+
+	return true;
+}
+
+bool pamSave(unsigned int sizex, unsigned int sizey, unsigned int channels, unsigned char *buf, FILE *f)
+{
+	const char *tuple[] = {"GRAYSCALE", "GRAYSCALE_ALPHA", "RGB", "GRAYSCALE_ALPHA"};
+	
+	if(channels < 1 && channels > 4) return false;
+	if(sizex == 0 || sizey == 0) return false;
+	if(!buf || !f) return false;
+	
+	fprintf(f, "P7\n"
+	           "WIDTH %u\n"
+	           "HEIGHT %u\n"
+	           "DEPTH %u\n"
+	           "MAXVAL 255\n"
+	           "TUPLTYPE %s\n"
+	           "ENDHDR\n",
+	           sizex, sizey, channels, tuple[channels-1]);
+	
+	DumpBuffer(sizex, sizey, channels, buf, f);
 
 	return true;
 }

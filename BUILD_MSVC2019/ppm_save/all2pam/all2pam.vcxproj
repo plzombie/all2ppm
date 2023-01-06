@@ -29,8 +29,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{b61b654b-9a0b-49be-b5ec-660e53258ff7}</ProjectGuid>
-    <RootNamespace>all2ppm</RootNamespace>
+    <ProjectGuid>{1b80b109-52ec-4c4a-8a26-3bf745bf609e}</ProjectGuid>
+    <RootNamespace>all2pam</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -200,7 +200,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\all2ppm.c" />
+    <ClCompile Include="..\..\..\src\all2pam.c" />
     <ClCompile Include="..\..\..\src\ppm_save.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

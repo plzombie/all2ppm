@@ -1,7 +1,7 @@
 /*
 BSD 2-Clause License
 
-Copyright (c) 2021, Mikhail Morozov
+Copyright (c) 2023, Mikhail Morozov
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -26,22 +26,60 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef PPM_SAVE_H
-#define PPM_SAVE_H
+#include "../include/ppm_save.h"
 
-#ifdef __cplusplus
-extern "C" {
+#include <stdlib.h>
+#include <wchar.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "third_party/stb_image.h"
+
+#if defined(_WIN32)
+#define A2P_USE_WCHAR
 #endif
 
-#include <stdio.h>
-#include <stdbool.h>
+#ifdef A2P_USE_WCHAR
+int wmain(int argc, wchar_t **argv)
+#else
+int main(int argc, char** argv)
+#endif
+{
+	FILE *f_in = 0, *f_out = 0;
+	int sizex, sizey, channels;
+	unsigned char *buffer = 0;
 
-extern bool ppmSave(unsigned int sizex, unsigned int sizey, unsigned int channels, unsigned char *buf, FILE *f);
-extern bool pamSave(unsigned int sizex, unsigned int sizey, unsigned int channels, unsigned char *buf, FILE *f);
-extern bool pbmSave(unsigned int sizex, unsigned int sizey, unsigned char *buf, FILE *f);
+	if(argc < 3) {
+		wprintf(L"\tall2pam input.* output.ppm\n\n");
+		return 0;
+	}
 
-#ifdef __cplusplus
+#ifdef A2P_USE_WCHAR
+	f_in = _wfopen(argv[1], L"rb");
+	f_out = _wfopen(argv[2], L"wb");
+#else
+	f_in = fopen(argv[1], "rb");
+	f_out = fopen(argv[2], "wb");
+#endif
+	if(!f_in || !f_out) {
+		wprintf(L"Can't open files\n");
+		goto EXIT;
+	}
+
+	buffer = stbi_load_from_file(f_in, &sizex, &sizey, &channels, 0);
+	if(!buffer) {
+		wprintf(L"Can't open file\n");
+		goto EXIT;
+	}
+
+	if(!pamSave(sizex, sizey, channels, buffer, f_out)) {
+		wprintf(L"Can't save file\n");
+		goto EXIT;
+	}
+
+EXIT:
+	if(f_in) fclose(f_in);
+	if(f_out) fclose(f_out);
+	if(buffer) free(buffer);
+
+        return 0;
 }
-#endif
-
-#endif
