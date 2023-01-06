@@ -67,7 +67,7 @@ bool ppmSave(unsigned int sizex, unsigned int sizey, unsigned int channels, unsi
 
 bool pamSave(unsigned int sizex, unsigned int sizey, unsigned int channels, unsigned char *buf, FILE *f)
 {
-	const char *tuple[] = {"GRAYSCALE", "GRAYSCALE_ALPHA", "RGB", "GRAYSCALE_ALPHA"};
+	const char *tuple[] = {"GRAYSCALE", "GRAYSCALE_ALPHA", "RGB", "RGB_ALPHA"};
 	
 	if(channels < 1 && channels > 4) return false;
 	if(sizex == 0 || sizey == 0) return false;
