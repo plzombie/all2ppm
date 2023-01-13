@@ -31,10 +31,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdint.h>
 #include <stdlib.h>
 
-static void DumpBuffer(unsigned int sizex, unsigned int sizey, unsigned int channels, unsigned char *buf, FILE *f)
+static void DumpBuffer(unsigned int sizex, unsigned int sizey, unsigned int channels, const unsigned char *buf, FILE *f)
 {
 	size_t i, j, jmax, line_size;
-	unsigned char *p;
+	const unsigned char *p;
 	
 	if((SIZE_MAX / channels) >= sizex) {
 		jmax = 1;
@@ -52,7 +52,7 @@ static void DumpBuffer(unsigned int sizex, unsigned int sizey, unsigned int chan
 		}
 }
 
-bool ppmSave(unsigned int sizex, unsigned int sizey, unsigned int channels, unsigned char *buf, FILE *f)
+bool ppmSave(unsigned int sizex, unsigned int sizey, unsigned int channels, const unsigned char *buf, FILE *f)
 {
 	if(channels != 1 && channels != 3) return false;
 	if(sizex == 0 || sizey == 0) return false;
@@ -65,11 +65,11 @@ bool ppmSave(unsigned int sizex, unsigned int sizey, unsigned int channels, unsi
 	return true;
 }
 
-bool pamSave(unsigned int sizex, unsigned int sizey, unsigned int channels, unsigned char *buf, FILE *f)
+bool pamSave(unsigned int sizex, unsigned int sizey, unsigned int channels, const unsigned char *buf, FILE *f)
 {
 	const char *tuple[] = {"GRAYSCALE", "GRAYSCALE_ALPHA", "RGB", "RGB_ALPHA"};
 	
-	if(channels < 1 && channels > 4) return false;
+	if(channels < 1 || channels > 4) return false;
 	if(sizex == 0 || sizey == 0) return false;
 	if(!buf || !f) return false;
 	
@@ -87,10 +87,10 @@ bool pamSave(unsigned int sizex, unsigned int sizey, unsigned int channels, unsi
 	return true;
 }
 
-bool pbmSave(unsigned int sizex, unsigned int sizey, unsigned char *buf, FILE *f)
+bool pbmSave(unsigned int sizex, unsigned int sizey, const unsigned char *buf, FILE *f)
 {
-	unsigned char *filebuf, *p, b;
-	size_t fileline, filesize, i, j, k;
+	unsigned char *filebuf, *p;
+	size_t fileline, filesize, i, j;
 
 	if(sizex == 0 || sizey == 0) return false;
 	if(!buf || !f) return false;
@@ -107,6 +107,9 @@ bool pbmSave(unsigned int sizex, unsigned int sizey, unsigned char *buf, FILE *f
 
 	p = filebuf;
 	for(i = 0; i < (size_t)sizey; i++) {
+		unsigned char b;
+		size_t k;
+		
 		k = 0;
 		b = 0;
 		for(j = 0; j < (size_t)sizex; j++, k++) {

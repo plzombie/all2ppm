@@ -36,9 +36,9 @@ extern "C" {
 #include <stdio.h>
 #include <stdbool.h>
 
-extern bool ppmSave(unsigned int sizex, unsigned int sizey, unsigned int channels, unsigned char *buf, FILE *f);
-extern bool pamSave(unsigned int sizex, unsigned int sizey, unsigned int channels, unsigned char *buf, FILE *f);
-extern bool pbmSave(unsigned int sizex, unsigned int sizey, unsigned char *buf, FILE *f);
+extern bool ppmSave(unsigned int sizex, unsigned int sizey, unsigned int channels, const unsigned char *buf, FILE *f);
+extern bool pamSave(unsigned int sizex, unsigned int sizey, unsigned int channels, const unsigned char *buf, FILE *f);
+extern bool pbmSave(unsigned int sizex, unsigned int sizey, const unsigned char *buf, FILE *f);
 
 #ifdef __cplusplus
 }
